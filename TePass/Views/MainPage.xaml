@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:TePass.Views"
+             x:Class="TePass.Views.MainPage">
+
+    <ContentPage.Content>
+        <StackLayout>
+            <StackLayout.Background>
+                <LinearGradientBrush EndPoint="0,1">
+                    <GradientStop Color="#53A556"
+                          Offset="0.1" />
+                    <GradientStop Color="#005203"
+                          Offset="1.0" />
+                </LinearGradientBrush>
+            </StackLayout.Background>
+            <Frame Padding="24" CornerRadius="0">
+                <StackLayout Orientation="Horizontal">
+                    <Label Text="{x:Static local:App.HEADER}" HorizontalTextAlignment="Start" TextColor="White" FontSize="52"/>
+                </StackLayout>
+                <Frame.Background>
+                    <LinearGradientBrush EndPoint="0,1">
+                        <GradientStop Color="#005203"
+                          Offset="0.1" />
+                        <GradientStop Color="#415942"
+                          Offset="1.0" />
+                    </LinearGradientBrush>
+                </Frame.Background>
+            </Frame>
+            <Label Text="Имя" HorizontalOptions="Center" FontSize="14" TextColor="White" />
+            <Entry BackgroundColor="#" PlaceholderColor="#" HorizontalTextAlignment="Center" HeightRequest="50" FontSize="30" Text="{Binding ViewModel.Name}" TextColor="White"/>
+            <Label Text="Ключ: " HorizontalOptions="Center" FontSize="14" TextColor="White" />
+            <Entry BackgroundColor="#" PlaceholderColor="#" HorizontalTextAlignment="Center" HeightRequest="50" FontSize="30" Text="{Binding ViewModel.VoidCode}" TextColor="White"/>
+            <Button x:Name="button1" Text="Пройти" Command="{Binding Check}"  IsEnabled="{Binding IsLoaded}" TextColor="White" FontSize="30" BackgroundColor="#" HeightRequest="100" HorizontalOptions="Fill"/>
+            <StackLayout IsVisible="false" x:Name="isNotConnection">
+                <Label Text="Нет соединения" TextColor="White" FontSize="14" HorizontalTextAlignment="Center" HorizontalOptions="CenterAndExpand" VerticalOptions="EndAndExpand"/>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
