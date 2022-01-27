@@ -8,7 +8,7 @@
 
   <Identity
     Name="0468fc25-5c27-4535-aa49-2495539167f9"
-    Publisher="CN=d4181f51-1d9d-4d7e-9d21-293338619299"
+    Publisher="CN=EugeneMaslov"
     Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="ec0cc741-fd3e-485c-81be-68815c480690" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
@@ -32,7 +32,7 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="TePass.UWP.App">
       <uap:VisualElements
-        DisplayName="TePass.UWP"
+        DisplayName="TePass"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
         Description="TePass.UWP"
@@ -45,6 +45,8 @@
           </uap:ShowNameOnTiles>
         </uap:DefaultTile>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
+        <uap:InitialRotationPreference>
+          <uap:Rotation Preference="landscape"/></uap:InitialRotationPreference>
       </uap:VisualElements>
     </Application>
   </Applications>

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +25,7 @@ namespace TePass.ViewModels
         TestsService testsService = new TestsService();
         QuestionsService questionsService = new QuestionsService();
         VarientsService varientsService = new VarientsService();
+        LoginService loginService = new LoginService();
         public QuestionIn QuestionIn;
         public string textQuest { get; set; }
         public string VoidCode { get; set; }
@@ -119,13 +122,41 @@ namespace TePass.ViewModels
             }
             else 
             {
-                result = (int)Math.Round(((double)preResult / Varients.Count * 10), 0);
+                result = (int)Math.Round(((double)preResult / Questions.Count * 10), 0);
                 i = 0;
-                QuestionIn.DisplayAlert("Оценка",$"{Name}, вы получили " + result.ToString() + ", поздравляю!","ОК");
-                preResult = 0;
-                result = 0;
+                _ = SendEmailAsync();
+                QuestionIn.DisplayAlert("Отметка",$"{Name}, вы получили " + result.ToString() + ", поздравляю!","ОК");
                 Navigation.PopModalAsync();
             }
+        }
+        private async Task SendEmailAsync()
+        {
+            MailAddress from = new MailAddress("servicetecon@gmail.com", "TeConService");
+            MailAddress to = new MailAddress(await GetUserMail(selectedTest.UserId));
+            MailMessage m = new MailMessage(from, to);
+            m.Subject = $"Ваш тест ({selectedTest.Name}) прошёл пользователь (учащийся) {Name}! Отметка - {result}";
+            m.Body = $"Здравствуйте, ваш тест {selectedTest.Name} прошёл пользователь (учащийся) {Name} с отметкой {result}";
+            preResult = 0;
+            result = 0;
+            SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
+            smtp.Credentials = new NetworkCredential("servicetecon@gmail.com", "servicesTeCon");
+            smtp.EnableSsl = true;
+            await smtp.SendMailAsync(m);
+        }
+        public async Task<string> GetUserMail(int userId)
+        {
+            IsBusy = true;
+            IEnumerable<User> users = await loginService.Get();
+            List<User> inter = users.ToList();
+            foreach (User user in inter)
+            {
+                if (user.Id == userId)
+                {
+                    return user.Email;
+                }
+            }
+            IsBusy = false;
+            return "";
         }
         public Test SelectedTest
         {
@@ -142,7 +173,8 @@ namespace TePass.ViewModels
                         Id = value.Id,
                         Name = value.Name,
                         Questions = value.Questions,
-                        Code = value.Code
+                        Code = value.Code,
+                        UserId = value.UserId
                     };
                     selectedTest = tempTest;
                     OnPropertyChanged("SelectedTest");
@@ -159,7 +191,8 @@ namespace TePass.ViewModels
                         Id = value.Id,
                         Name = value.Name,
                         Questions = value.Questions,
-                        Code = value.Code
+                        Code = value.Code,
+                        UserId = value.UserId
                     };
                     selectedTest = tempTest;
                     OnPropertyChanged("SelectedTest");
@@ -267,9 +300,12 @@ namespace TePass.ViewModels
             // добавляем загруженные данные
             foreach (Question f in questions)
             {
-                if (selectedTest.Id == f.TestId)
+                if (selectedTest != null)
                 {
-                    Questions.Add(f);
+                    if (selectedTest.Id == f.TestId)
+                    {
+                        Questions.Add(f);
+                    }
                 }
             }
         }
