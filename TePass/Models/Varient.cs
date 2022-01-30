@@ -15,6 +15,10 @@ namespace TePass.Models
         {
             return new Varient(Id,OVarient, IsTrue, QuestionId);
         }
+        public object CloneNotTrue()
+        {
+            return new Varient(Id, OVarient, false, QuestionId);
+        }
         public Varient()
         {
             

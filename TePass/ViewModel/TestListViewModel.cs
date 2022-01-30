@@ -320,6 +320,8 @@ namespace TePass.ViewModels
             VarientsNotAnswer.Clear();
             while (Varients.Any())
                 Varients.RemoveAt(Varients.Count - 1);
+            while (VarientsNotAnswer.Any())
+                VarientsNotAnswer.RemoveAt(VarientsNotAnswer.Count - 1);
             if (Questions.Count > 0)
             {
                 if (Questions[i].TestId == SelectedTest.Id)
@@ -335,12 +337,9 @@ namespace TePass.ViewModels
                     }
                     foreach (Varient item in Varients)
                     {
-                        VarientsNotAnswer.Add((Varient)item.Clone());
+                        VarientsNotAnswer.Add((Varient)item.CloneNotTrue());
                     }
-                    for (int i = 0; i < VarientsNotAnswer.Count; i++)
-                    {
-                        VarientsNotAnswer[i].IsTrue = false;
-                    }
+                    OnPropertyChanged("VarientsNotAnswer");
                 }
             }
             IsBusy = false;
