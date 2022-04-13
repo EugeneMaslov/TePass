@@ -12,6 +12,7 @@ using System.Windows.Input;
 using TePass.Models;
 using TePass.Views;
 using Xamarin.Forms;
+using TePass.Services;
 
 namespace TePass.ViewModels
 {
@@ -80,23 +81,22 @@ namespace TePass.ViewModels
         }
         #endregion
         #region SelectedObjects
-        public void DoCheck()
+        public async void DoCheck()
         {
-            _ = GetFriends();
-            _ = GetQuestions();
-            _ = GetVarients();
-            foreach (Test item in Tests)
-            {
-                if (item.Code == VoidCode)
-                {
-                    SelectedTest = item;
-                    break;
-                }
-            }
+            IsBusy = true;
+            await GetFriends();
+            await GetQuestions();
+            await GetVarients();
+            IsBusy = false;
+            Later();
+        }
+        private void Later()
+        {
+            Navigation.PushModalAsync(new QuestionIn(SelectedTest, this));
         }
         public int preResult;
         public int result;
-        public void DoAnswerMethod()
+        public async void DoAnswerMethod()
         {
             bool preTrue = false;
             for (int i = 0; i < Varients.Count; i++)
@@ -118,43 +118,47 @@ namespace TePass.ViewModels
             if (i < Questions.Count-1)
             {
                 i++;
-                _ = GetVarients();
+                await GetVarients();
             }
             else 
             {
                 result = (int)Math.Round(((double)preResult / Questions.Count * 10), 0);
                 i = 0;
-                _ = SendEmailAsync();
-                QuestionIn.DisplayAlert("Отметка",$"{Name}, вы получили " + result.ToString() + ", поздравляю!","ОК");
-                Navigation.PopModalAsync();
+                await QuestionIn.DisplayAlert("Отметка", $"{Name}, вы получили " + result.ToString() + ", поздравляю!", "ОК");
+                await SendEmailAsync();
+                _ = Navigation.PopModalAsync();
             }
         }
         private async Task SendEmailAsync()
         {
-            MailAddress from = new MailAddress("servicetecon@gmail.com", "TeConService");
-            MailAddress to = new MailAddress(await GetUserMail(selectedTest.UserId));
-            MailMessage m = new MailMessage(from, to);
-            m.Subject = $"Ваш тест ({selectedTest.Name}) прошёл пользователь (учащийся) {Name}! Отметка - {result}";
-            m.Body = $"Здравствуйте, ваш тест {selectedTest.Name} прошёл пользователь (учащийся) {Name} с отметкой {result}";
-            preResult = 0;
-            result = 0;
-            SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
-            smtp.Credentials = new NetworkCredential("servicetecon@gmail.com", "servicesTeCon");
-            smtp.EnableSsl = true;
-            await smtp.SendMailAsync(m);
+            IsBusy = true;
+            try
+            {
+                MailAddress from = new MailAddress("servicetecon@gmail.com", "TeDevelopment");
+                MailAddress to = new MailAddress(await GetUserMail(selectedTest.UserId));
+                MailMessage m = new MailMessage(from, to);
+                m.Subject = $"Ваш тест ({selectedTest.Name}) прошёл пользователь (учащийся) {Name}! Отметка - {result}";
+                m.Body = $"Здравствуйте, ваш тест {selectedTest.Name} прошёл пользователь (учащийся) {Name} с отметкой {result}";
+                preResult = 0;
+                result = 0;
+                SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
+                smtp.Credentials = new NetworkCredential("servicetecon@gmail.com", "servicesTeCon");
+                smtp.EnableSsl = true;
+                await smtp.SendMailAsync(m);
+            }
+            catch (Exception)
+            {
+                preResult = 0;
+                result = 0;
+            }
+            IsBusy = false;
         }
-        public async Task<string> GetUserMail(int userId)
+        public async Task<string> GetUserMail(int userid)
         {
             IsBusy = true;
-            IEnumerable<User> users = await loginService.Get();
-            List<User> inter = users.ToList();
-            foreach (User user in inter)
-            {
-                if (user.Id == userId)
-                {
-                    return user.Email;
-                }
-            }
+            string login = "";
+            User user = await loginService.Get(userid);
+            return user.Email;
             IsBusy = false;
             return "";
         }
@@ -196,8 +200,6 @@ namespace TePass.ViewModels
                     };
                     selectedTest = tempTest;
                     OnPropertyChanged("SelectedTest");
-                    Navigation.PushModalAsync(new QuestionIn(tempTest, this));
-                    Questions.Clear();
                 }
             }
         }
@@ -272,7 +274,7 @@ namespace TePass.ViewModels
         {
             if (initialized == true) return;
             IsBusy = true;
-            IEnumerable<Test> friends = await testsService.Get();
+            Test test = await testsService.GetTestByCode(VoidCode);
 
             // очищаем список
             Tests.Clear();
@@ -280,10 +282,8 @@ namespace TePass.ViewModels
                 Tests.RemoveAt(Tests.Count - 1);
 
             // добавляем загруженные данные
-            foreach (Test f in friends)
-            {
-                Tests.Add(f);
-            }
+            Tests.Add(test);
+            SelectedTest = test;
 
             IsBusy = false;
         }
@@ -291,7 +291,7 @@ namespace TePass.ViewModels
         {
             if (initialized == true) return;
             IsBusy = true;
-            IEnumerable<Question> questions = await questionsService.Get();
+            IEnumerable<Question> questions = await questionsService.GetQuestByTestId(selectedTest.Id);
             // очищаем список
             Questions.Clear();
             while (Questions.Any())
@@ -300,12 +300,9 @@ namespace TePass.ViewModels
             // добавляем загруженные данные
             foreach (Question f in questions)
             {
-                if (selectedTest != null)
+                if (!Questions.Contains(f))
                 {
-                    if (selectedTest.Id == f.TestId)
-                    {
-                        Questions.Add(f);
-                    }
+                    Questions.Add(f);
                 }
             }
         }
@@ -314,33 +311,33 @@ namespace TePass.ViewModels
         {
             if (initialized == true) return;
             IsBusy = true;
-            IEnumerable<Varient> varients = await varientsService.Get();
-            // добавляем загруженные данные
-            Varients.Clear();
-            VarientsNotAnswer.Clear();
-            while (Varients.Any())
-                Varients.RemoveAt(Varients.Count - 1);
-            while (VarientsNotAnswer.Any())
-                VarientsNotAnswer.RemoveAt(VarientsNotAnswer.Count - 1);
             if (Questions.Count > 0)
             {
-                if (Questions[i].TestId == SelectedTest.Id)
+                SelectedQuestion = Questions[i];
+                IEnumerable<Varient> varients = await varientsService.GetVarientByQuestId(selectedQuestion.Id);
+
+                // добавляем загруженные данные
+                Varients.Clear();
+                VarientsNotAnswer.Clear();
+                while (Varients.Any())
+                    Varients.RemoveAt(Varients.Count - 1);
+                while (VarientsNotAnswer.Any())
+                    VarientsNotAnswer.RemoveAt(VarientsNotAnswer.Count - 1);
+
+                textQuest = Questions[i].OQuestion;
+                OnPropertyChanged("textQuest");
+                foreach (Varient f in varients)
                 {
-                    textQuest = Questions[i].OQuestion;
-                    OnPropertyChanged("textQuest");
-                    foreach (Varient f in varients)
+                    if (!Varients.Contains(f))
                     {
-                        if (Questions[i].Id == f.QuestionId)
-                        {
-                            Varients.Add(f);
-                        }
+                        Varients.Add(f);
                     }
-                    foreach (Varient item in Varients)
-                    {
-                        VarientsNotAnswer.Add((Varient)item.CloneNotTrue());
-                    }
-                    OnPropertyChanged("VarientsNotAnswer");
                 }
+                foreach (Varient item in Varients)
+                {
+                    VarientsNotAnswer.Add((Varient)item.CloneNotTrue());
+                }
+                OnPropertyChanged("VarientsNotAnswer");
             }
             IsBusy = false;
         }

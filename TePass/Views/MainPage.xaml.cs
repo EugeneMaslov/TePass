@@ -24,15 +24,10 @@ namespace TePass.Views
             if (Connectivity.NetworkAccess == NetworkAccess.Internet)
             {
                 isNotConnection.IsVisible = false;
-                await ViewModel.GetFriends();
                 ViewModel.SelectedTest = null;
                 base.OnAppearing();
             }
             else isNotConnection.IsVisible = true;
-        }
-        private async void testList_Refreshing(object sender, EventArgs e)
-        {
-            await ViewModel.GetFriends();
         }
     }
 }

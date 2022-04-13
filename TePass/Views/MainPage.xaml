@@ -5,36 +5,37 @@
              x:Class="TePass.Views.MainPage">
 
     <ContentPage.Content>
-        <StackLayout>
-            <StackLayout.Background>
-                <LinearGradientBrush EndPoint="0,1">
-                    <GradientStop Color="#53A556"
-                          Offset="0.1" />
-                    <GradientStop Color="#005203"
-                          Offset="1.0" />
-                </LinearGradientBrush>
-            </StackLayout.Background>
-            <Frame Padding="24" CornerRadius="0">
-                <StackLayout Orientation="Horizontal">
-                    <Label Text="{x:Static local:App.HEADER}" HorizontalTextAlignment="Start" TextColor="White" FontSize="52"/>
+        <StackLayout BackgroundColor="#849583">
+            <Frame Padding="24" CornerRadius="0" BackgroundColor="#2d3a2e">
+                <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
+                    <Image Source="tepass.png" WidthRequest="50" HeightRequest="50" BackgroundColor="Transparent"/>
+                    <Label HorizontalTextAlignment="Start" FontSize="40" FontFamily="Rockwell">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="{x:Static local:App.HEADER}"  TextColor="#839784"></Span>
+                                <Span Text="{x:Static local:App.HEADER1}"  TextColor="#4daf54"></Span>
+                                <Span Text="{x:Static local:App.HEADER2}"  TextColor="#839784"></Span>
+                                <Span Text="{x:Static local:App.HEADER3}"  TextColor="#65b66b"></Span>
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    <Image Source="TeDevelopment.png" WidthRequest="50" HeightRequest="50" BackgroundColor="Transparent"/>
                 </StackLayout>
-                <Frame.Background>
-                    <LinearGradientBrush EndPoint="0,1">
-                        <GradientStop Color="#005203"
-                          Offset="0.1" />
-                        <GradientStop Color="#415942"
-                          Offset="1.0" />
-                    </LinearGradientBrush>
-                </Frame.Background>
             </Frame>
-            <Label Text="Имя" HorizontalOptions="Center" FontSize="14" TextColor="White" />
-            <Entry BackgroundColor="#" PlaceholderColor="#" HorizontalTextAlignment="Center" HeightRequest="50" FontSize="30" Text="{Binding ViewModel.Name}" TextColor="White"/>
-            <Label Text="Ключ: " HorizontalOptions="Center" FontSize="14" TextColor="White" />
-            <Entry BackgroundColor="#" PlaceholderColor="#" HorizontalTextAlignment="Center" HeightRequest="50" FontSize="30" Text="{Binding ViewModel.VoidCode}" TextColor="White"/>
-            <Button x:Name="button1" Text="Пройти" Command="{Binding Check}"  IsEnabled="{Binding IsLoaded}" TextColor="White" FontSize="30" BackgroundColor="#" HeightRequest="100" HorizontalOptions="Fill"/>
-            <StackLayout IsVisible="false" x:Name="isNotConnection">
-                <Label Text="Нет соединения" TextColor="White" FontSize="14" HorizontalTextAlignment="Center" HorizontalOptions="CenterAndExpand" VerticalOptions="EndAndExpand"/>
+            <Label FontFamily="Rockwell" Text="Identification name: " HorizontalOptions="Center" FontSize="20" TextColor="White" />
+            <Entry FontFamily="Rockwell" BackgroundColor="#b4b4b4" PlaceholderColor="#" HorizontalTextAlignment="Center" HeightRequest="50" FontSize="30" Text="{Binding ViewModel.Name}" TextColor="White"/>
+            <Label FontFamily="Rockwell" Text="Test key: " HorizontalOptions="Center" FontSize="20" TextColor="White" />
+            <Entry FontFamily="Rockwell" BackgroundColor="#b4b4b4" PlaceholderColor="#" HorizontalTextAlignment="Center" HeightRequest="50" FontSize="30" Text="{Binding ViewModel.VoidCode}" TextColor="White"/>
+            <StackLayout IsVisible="{Binding IsBusy}"
+                    HorizontalOptions="Center" VerticalOptions="CenterAndExpand" Padding="20">
+                <Label FontFamily="Rockwell" Text="Loading..." TextColor="Gray" HorizontalOptions="Center" />
+                <ActivityIndicator IsRunning="{Binding IsBusy}" Color="Red" >
+                </ActivityIndicator>
             </StackLayout>
+            <StackLayout IsVisible="false" x:Name="isNotConnection">
+                <Label FontFamily="Rockwell" Text="Not connection" TextColor="White" FontSize="20" HorizontalTextAlignment="Center" HorizontalOptions="CenterAndExpand" VerticalOptions="EndAndExpand"/>
+            </StackLayout>
+            <Button x:Name="button1" FontFamily="Rockwell" Text="Pass the test" Command="{Binding Check}"  IsEnabled="{Binding IsLoaded}" TextColor="White" FontSize="50" BackgroundColor="#425743" HeightRequest="100" HorizontalOptions="Fill" VerticalOptions="EndAndExpand"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

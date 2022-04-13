@@ -3,16 +3,15 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using TePass.Models;
 
-namespace TePass
+namespace TePass.Services
 {
     public class TestsService
     {
         const string Url = "https://teconservice.herokuapp.com/api/Tests/";
-        JsonSerializerOptions options = new JsonSerializerOptions
+        readonly JsonSerializerOptions options = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         };
@@ -22,11 +21,27 @@ namespace TePass
             client.DefaultRequestHeaders.Add("Accept", "application/json");
             return client;
         }
-        public async Task<IEnumerable<Test>> Get()
+        public async Task<IEnumerable<Test>> GetTestByUserId(int id)
         {
             HttpClient client = GetClient();
-            string result = await client.GetStringAsync(Url);
-            return JsonSerializer.Deserialize<IEnumerable<Test>>(result, options);
+            var x = await client.GetAsync(Url + id);
+            if (x.IsSuccessStatusCode)
+            {
+                string result = await client.GetStringAsync(Url + id);
+                return JsonSerializer.Deserialize<IEnumerable<Test>>(result, options);
+            }
+            else return null;
+        }
+        public async Task<Test> GetTestByCode(string code)
+        {
+            HttpClient client = GetClient();
+            var x = await client.GetAsync(Url + "code/" + code);
+            if (x.IsSuccessStatusCode)
+            {
+                string result = await client.GetStringAsync(Url + "code/" + code);
+                return JsonSerializer.Deserialize<Test>(result, options);
+            }
+            else return null;
         }
         public async Task<Test> Add(Test test)
         {

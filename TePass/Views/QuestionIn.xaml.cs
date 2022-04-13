@@ -21,16 +21,14 @@ namespace TePass.Views
             InitializeComponent();
             Test = model;
             ViewModel = viewModel;
-            this.BindingContext = this;
-            ViewModel.QuestionIn = this;
+            BindingContext = this;
+            viewModel.QuestionIn = this;
         }
         protected override async void OnAppearing()
         {
             if (Connectivity.NetworkAccess == NetworkAccess.Internet)
             {
                 isNotConnection.IsVisible = false;
-                await ViewModel.GetQuestions();
-                await ViewModel.GetVarients();
                 ViewModel.SelectedQuestion = null;
                 ViewModel.SelectedVarient = null;
                 base.OnAppearing();
