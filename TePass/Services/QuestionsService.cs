@@ -9,7 +9,7 @@ using TePass.Models;
 
 namespace TePass.Services
 {
-    class QuestionsService
+    public class QuestionsService
     {
         const string Url = "https://teconservice.herokuapp.com/api/Questions/";
         readonly JsonSerializerOptions options = new JsonSerializerOptions
@@ -32,44 +32,6 @@ namespace TePass.Services
                 return JsonSerializer.Deserialize<IEnumerable<Question>>(result, options);
             }
             else return null;
-        }
-        public async Task<Question> Add(Question question)
-        {
-            HttpClient client = GetClient();
-            var response = await client.PostAsync(Url,
-                new StringContent(
-                    JsonSerializer.Serialize(question),
-                    Encoding.UTF8, "application/json"));
-
-            if (response.StatusCode != HttpStatusCode.OK)
-                return null;
-
-            return JsonSerializer.Deserialize<Question>(
-                await response.Content.ReadAsStringAsync(), options);
-        }
-        public async Task<Question> Update(Question question)
-        {
-            HttpClient client = GetClient();
-            var response = await client.PutAsync(Url,
-                new StringContent(
-                    JsonSerializer.Serialize(question),
-                    Encoding.UTF8, "application/json"));
-
-            if (response.StatusCode != HttpStatusCode.OK)
-                return null;
-
-            return JsonSerializer.Deserialize<Question>(
-                await response.Content.ReadAsStringAsync(), options);
-        }
-        public async Task<Question> Delete(int id)
-        {
-            HttpClient client = GetClient();
-            var response = await client.DeleteAsync(Url + id);
-            if (response.StatusCode != HttpStatusCode.OK)
-                return null;
-
-            return JsonSerializer.Deserialize<Question>(
-               await response.Content.ReadAsStringAsync(), options);
         }
     }
 }

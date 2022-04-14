@@ -24,16 +24,38 @@ namespace TePass.Views
             BindingContext = this;
             viewModel.QuestionIn = this;
         }
-        protected override async void OnAppearing()
+        protected override void OnAppearing()
         {
+            CheckLang();
             if (Connectivity.NetworkAccess == NetworkAccess.Internet)
             {
-                isNotConnection.IsVisible = false;
                 ViewModel.SelectedQuestion = null;
                 ViewModel.SelectedVarient = null;
+                ViewModel.IsNoConnection = false;
                 base.OnAppearing();
             }
-            else isNotConnection.IsVisible = true;
+            else ViewModel.IsNoConnection = true;
+        }
+        private void CheckLang()
+        {
+            if (ViewModel.SelectedLanguage == "English")
+            {
+                LOADING.Text = "Loading...";
+                NO_CONNECTION.Text = "No internet connection";
+                ACCEPT.Text = "Accept answer";
+            }
+            else if (ViewModel.SelectedLanguage == "Русский")
+            {
+                LOADING.Text = "Загрузка...";
+                NO_CONNECTION.Text = "Нет подключения";
+                ACCEPT.Text = "Подтвердить";
+            }
+            else if (ViewModel.SelectedLanguage == "Беларуская")
+            {
+                LOADING.Text = "Загрузка...";
+                NO_CONNECTION.Text = "Няма падключення";
+                ACCEPT.Text = "Адказаць";
+            }
         }
     }
 }

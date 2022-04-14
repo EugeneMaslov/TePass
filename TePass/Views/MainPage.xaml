@@ -22,20 +22,24 @@
                     <Image Source="TeDevelopment.png" WidthRequest="50" HeightRequest="50" BackgroundColor="Transparent"/>
                 </StackLayout>
             </Frame>
-            <Label FontFamily="Rockwell" Text="Identification name: " HorizontalOptions="Center" FontSize="20" TextColor="White" />
+            <Label x:Name="IDENTIFY" FontFamily="Rockwell" Text="Identification name: " HorizontalOptions="Center" FontSize="20" TextColor="White" />
             <Entry FontFamily="Rockwell" BackgroundColor="#b4b4b4" PlaceholderColor="#" HorizontalTextAlignment="Center" HeightRequest="50" FontSize="30" Text="{Binding ViewModel.Name}" TextColor="White"/>
-            <Label FontFamily="Rockwell" Text="Test key: " HorizontalOptions="Center" FontSize="20" TextColor="White" />
+            <Label x:Name="TEST_KEY" FontFamily="Rockwell" Text="Test key: " HorizontalOptions="Center" FontSize="20" TextColor="White" />
             <Entry FontFamily="Rockwell" BackgroundColor="#b4b4b4" PlaceholderColor="#" HorizontalTextAlignment="Center" HeightRequest="50" FontSize="30" Text="{Binding ViewModel.VoidCode}" TextColor="White"/>
             <StackLayout IsVisible="{Binding IsBusy}"
                     HorizontalOptions="Center" VerticalOptions="CenterAndExpand" Padding="20">
-                <Label FontFamily="Rockwell" Text="Loading..." TextColor="Gray" HorizontalOptions="Center" />
+                <Label x:Name="LOADING" FontFamily="Rockwell" Text="Loading..." TextColor="Gray" HorizontalOptions="Center" />
                 <ActivityIndicator IsRunning="{Binding IsBusy}" Color="Red" >
                 </ActivityIndicator>
             </StackLayout>
-            <StackLayout IsVisible="false" x:Name="isNotConnection">
-                <Label FontFamily="Rockwell" Text="Not connection" TextColor="White" FontSize="20" HorizontalTextAlignment="Center" HorizontalOptions="CenterAndExpand" VerticalOptions="EndAndExpand"/>
+            <StackLayout IsVisible="{Binding IsNoConnection}" x:Name="isNotConnectiond">
+                <Label x:Name="NO_CONNECTION" FontFamily="Rockwell" Text="No connection" TextColor="White" FontSize="20" HorizontalTextAlignment="Center" HorizontalOptions="CenterAndExpand" VerticalOptions="EndAndExpand"/>
             </StackLayout>
-            <Button x:Name="button1" FontFamily="Rockwell" Text="Pass the test" Command="{Binding Check}"  IsEnabled="{Binding IsLoaded}" TextColor="White" FontSize="50" BackgroundColor="#425743" HeightRequest="100" HorizontalOptions="Fill" VerticalOptions="EndAndExpand"/>
+            <StackLayout IsVisible="{Binding IsNoTest}" x:Name="isNotTest">
+                <Label x:Name="TEST_NOT_FOUND" FontFamily="Rockwell" Text="Test not found" TextColor="White" FontSize="20" HorizontalTextAlignment="Center" HorizontalOptions="CenterAndExpand" VerticalOptions="EndAndExpand"/>
+            </StackLayout>
+            <Button x:Name="PASS_TEST" FontFamily="Rockwell" Text="Pass the test" Command="{Binding Check}"  IsEnabled="{Binding IsLoaded}" TextColor="White" FontSize="50" BackgroundColor="#425743" HeightRequest="100" HorizontalOptions="Fill" VerticalOptions="EndAndExpand"/>
+            <Button x:Name="CHANGE_LANGUAGE" FontFamily="Rockwell" Text="Change language" Command="{Binding Lang}" TextColor="White" FontSize="50" BackgroundColor="#425743" HeightRequest="100" HorizontalOptions="Fill" VerticalOptions="End"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

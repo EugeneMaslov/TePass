@@ -10,11 +10,10 @@ namespace TePass.Views
         public const string HEADER1 = "st";
         public const string HEADER2 = "Pass";
         public const string HEADER3 = "ing";
-        public const string IsTrueText = "Правильный ответ";
         public App()
         {
             InitializeComponent();
-            MainPage = new MainPage();
+            MainPage = new MainPage(null);
         }
 
         protected override void OnStart()

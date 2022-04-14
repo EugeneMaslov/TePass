@@ -36,5 +36,9 @@ namespace TePass.Models
             Varient varient = obj as Varient;
             return this.Id == varient.Id;
         }
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }

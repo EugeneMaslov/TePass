@@ -8,7 +8,7 @@ using TePass.Models;
 
 namespace TePass.Services
 {
-    class VarientsService
+    public class VarientsService
     {
         const string Url = "https://teconservice.herokuapp.com/api/Varients/";
         readonly JsonSerializerOptions options = new JsonSerializerOptions
@@ -31,44 +31,6 @@ namespace TePass.Services
                 return JsonSerializer.Deserialize<IEnumerable<Varient>>(result, options);
             }
             else return null;
-        }
-        public async Task<Varient> Add(Varient varient)
-        {
-            HttpClient client = GetClient();
-            var response = await client.PostAsync(Url,
-                new StringContent(
-                    JsonSerializer.Serialize(varient),
-                    Encoding.UTF8, "application/json"));
-
-            if (response.StatusCode != HttpStatusCode.OK)
-                return null;
-
-            return JsonSerializer.Deserialize<Varient>(
-                await response.Content.ReadAsStringAsync(), options);
-        }
-        public async Task<Varient> Update(Varient varient)
-        {
-            HttpClient client = GetClient();
-            var response = await client.PutAsync(Url,
-                new StringContent(
-                    JsonSerializer.Serialize(varient),
-                    Encoding.UTF8, "application/json"));
-
-            if (response.StatusCode != HttpStatusCode.OK)
-                return null;
-
-            return JsonSerializer.Deserialize<Varient>(
-                await response.Content.ReadAsStringAsync(), options);
-        }
-        public async Task<Varient> Delete(int id)
-        {
-            HttpClient client = GetClient();
-            var response = await client.DeleteAsync(Url + id);
-            if (response.StatusCode != HttpStatusCode.OK)
-                return null;
-
-            return JsonSerializer.Deserialize<Varient>(
-               await response.Content.ReadAsStringAsync(), options);
         }
     }
 }

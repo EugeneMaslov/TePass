@@ -21,15 +21,15 @@
                     <Image Source="TeDevelopment.png" WidthRequest="50" HeightRequest="50" BackgroundColor="Transparent"/>
                 </StackLayout>
             </Frame>
-            <Label FontFamily="Rockwell" Text="{Binding ViewModel.textQuest}" HorizontalTextAlignment="Center" TextColor="White" FontSize="30"/>
+            <Label FontFamily="Rockwell" Text="{Binding ViewModel.TextQuest}" HorizontalTextAlignment="Center" TextColor="White" FontSize="30"/>
             <ListView x:Name="testList" ItemsSource="{Binding ViewModel.VarientsNotAnswer}" HasUnevenRows="True" VerticalScrollBarVisibility="Never">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
                             <ViewCell.View>
-                                <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
-                                    <Label FontFamily="Rockwell" Text="{Binding OVarient}" MaxLines="1" LineBreakMode="HeadTruncation" TextColor="White" FontSize="20" HorizontalTextAlignment="Center" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
-                                    <Switch x:Uid="testAns" IsEnabled="True" IsToggled="{Binding IsTrue}" OnColor="#425743" ThumbColor="#425743" HorizontalOptions="EndAndExpand" VerticalOptions="Center"/>
+                                <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
+                                    <Label FontFamily="Rockwell" Text="{Binding OVarient}" MaxLines="1" LineBreakMode="HeadTruncation" TextColor="White" FontSize="20" HorizontalTextAlignment="Center" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                    <Switch x:Uid="testAns" IsEnabled="True" IsToggled="{Binding IsTrue}" OnColor="#425743" ThumbColor="#425743" HorizontalOptions="End" VerticalOptions="Center"/>
                                 </StackLayout>
                             </ViewCell.View>
                         </ViewCell>
@@ -38,14 +38,14 @@
             </ListView>
             <StackLayout IsVisible="{Binding ViewModel.IsBusy}"
                     HorizontalOptions="Center" VerticalOptions="CenterAndExpand" Padding="20">
-                <Label FontFamily="Rockwell" Text="Loading..." TextColor="Gray" HorizontalOptions="Center" />
+                <Label x:Name="LOADING" FontFamily="Rockwell" Text="Loading..." TextColor="Gray" HorizontalOptions="Center" />
                 <ActivityIndicator IsRunning="{Binding ViewModel.IsBusy}" Color="Red" >
                 </ActivityIndicator>
             </StackLayout>
-            <StackLayout IsVisible="false" x:Name="isNotConnection">
-                <Label FontFamily="Rockwell" Text="No connection" TextColor="White" FontSize="14" HorizontalTextAlignment="Center" HorizontalOptions="CenterAndExpand" VerticalOptions="EndAndExpand"/>
+            <StackLayout IsVisible="{Binding ViewModel.IsNoConnection}" x:Name="isNotConnectiond">
+                <Label x:Name="NO_CONNECTION" FontFamily="Rockwell" Text="No connection" TextColor="White" FontSize="14" HorizontalTextAlignment="Center" HorizontalOptions="CenterAndExpand" VerticalOptions="EndAndExpand"/>
             </StackLayout>
-            <Button FontFamily="Rockwell" x:Name="button1" Text="Accept answer" Command="{Binding ViewModel.DoAnswer}" IsEnabled="{Binding ViewModel.IsLoaded}" TextColor="White" FontSize="50" BackgroundColor="#425743" HeightRequest="100" HorizontalOptions="Fill" VerticalOptions="EndAndExpand"/>
+            <Button x:Name="ACCEPT" FontFamily="Rockwell" Text="Accept answer" Command="{Binding ViewModel.DoAnswer}" IsEnabled="{Binding ViewModel.IsLoaded}" TextColor="White" FontSize="50" BackgroundColor="#425743" HeightRequest="100" HorizontalOptions="Fill" VerticalOptions="EndAndExpand"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

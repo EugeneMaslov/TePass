@@ -23,5 +23,9 @@ namespace TePass.Models
             var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(input));
             return Convert.ToBase64String(hash);
         }
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }

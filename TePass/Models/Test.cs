@@ -18,5 +18,9 @@ namespace TePass.Models
             Test test = obj as Test;
             return this.Id == test.Id;
         }
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }
