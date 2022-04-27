@@ -9,7 +9,7 @@ namespace TePass.Services
 {
     public class LoginService
     {
-        const string Url = "https://teconservice.herokuapp.com/api/Account/";
+        const string Url = "https://tedevelopment.herokuapp.com/api/Account/";
         readonly JsonSerializerOptions options = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true

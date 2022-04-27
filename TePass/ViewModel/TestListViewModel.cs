@@ -29,6 +29,7 @@ namespace TePass.ViewModels
         private QuestionsService questionsService = new QuestionsService();
         private VarientsService varientsService = new VarientsService();
         private LoginService loginService = new LoginService();
+        private ResultService resultService = new ResultService();
         protected string selectedLanguage = "English";
 
         public QuestionIn QuestionIn { get; set; }
@@ -38,6 +39,7 @@ namespace TePass.ViewModels
         public ObservableCollection<Test> Tests { get; set; }
         public ObservableCollection<Question> Questions { get; set; }
         public List<Varient> Varients { get; set; }
+        public Result InstantResult { get; set; }
         public ObservableCollection<Varient> VarientsNotAnswer { get; set; }
         public ObservableCollection<string> Languages { get; set; }
 
@@ -199,6 +201,7 @@ namespace TePass.ViewModels
             Questions = new ObservableCollection<Question>();
             Varients = new List<Varient>();
             VarientsNotAnswer = new ObservableCollection<Varient>();
+            InstantResult = new Result();
             IsBusy = false;
             isNull = false;
             DoAnswer = new Command(DoAnswerMethod);
@@ -286,7 +289,22 @@ namespace TePass.ViewModels
                     {
                         result = (int)Math.Round((double)preResult / Questions.Count * 10, 0);
                         i = 0;
-                        await QuestionIn.DisplayAlert("Отметка", $"{Name}, вы получили " + result.ToString() + ", поздравляю!", "ОК");
+                        InstantResult.Name = Name;
+                        InstantResult.Result_by = result;
+                        InstantResult.TestId = SelectedTest.Id;
+                        if (SelectedLanguage == "English")
+                        {
+                            await QuestionIn.DisplayAlert("Mark", $"{Name}, you received " + result.ToString() + ", сongratulations!", "ОК");
+                        }
+                        else if (SelectedLanguage == "Русский")
+                        {
+                            await QuestionIn.DisplayAlert("Отметка", $"{Name}, вы получили " + result.ToString() + ", поздравляю!", "ОК");
+                        }
+                        else if (SelectedLanguage == "Беларуская")
+                        {
+                            await QuestionIn.DisplayAlert("Адзнака", $"{Name}, вы атрымалі " + result.ToString() + ", віншую!", "ОК");
+                        }
+                        await PushResult();
                         await SendEmailAsync();
                         await Navigation.PopModalAsync();
                     }
@@ -304,6 +322,14 @@ namespace TePass.ViewModels
                 DoAnswerMethod();
             }
         }
+        public async Task PushResult()
+        {
+            if (SelectedTest != null)
+            {
+                Result addedFriend = await resultService.Add(InstantResult);
+            }
+        }
+
         private async Task SendEmailAsync()
         {
             IsBusy = true;
@@ -311,10 +337,27 @@ namespace TePass.ViewModels
             {
                 MailAddress from = new MailAddress("servicetecon@gmail.com", "TeDevelopment");
                 MailAddress to = new MailAddress(await GetUserMail(FSelectedTest.UserId));
+                string text1 = "";
+                string text2 = "";
+                if (SelectedLanguage == "English")
+                {
+                    text1 = $"Your test ({FSelectedTest.Name}) is passed by user (student) {Name}! Mark - {result}";
+                    text2 = $"Здравствуйте, ваш тест {FSelectedTest.Name} is passed by user (student) {Name} with mark {result}";
+                }
+                else if (SelectedLanguage == "Русский")
+                {
+                    text1 = $"Ваш тест ({FSelectedTest.Name}) прошёл пользователь (учащийся) {Name}! Отметка - {result}";
+                    text2 = $"Здравствуйте, ваш тест {FSelectedTest.Name} прошёл пользователь (учащийся) {Name} с отметкой {result}";
+                }
+                else if (SelectedLanguage == "Беларуская")
+                {
+                    text1 = $"Ваш тэст ({FSelectedTest.Name}) прайшоў карыстальнік (навучэнец) {Name}! Адзнака - {result}";
+                    text2 = $"Добры дзень, ваш тэст {FSelectedTest.Name} прайшоў карыстальнік (навучэнец) {Name} з адзнакой {result}";
+                }
                 MailMessage m = new MailMessage(from, to)
                 {
-                    Subject = $"Ваш тест ({FSelectedTest.Name}) прошёл пользователь (учащийся) {Name}! Отметка - {result}",
-                    Body = $"Здравствуйте, ваш тест {FSelectedTest.Name} прошёл пользователь (учащийся) {Name} с отметкой {result}"
+                    Subject = text1,
+                    Body = text2
                 };
                 preResult = 0;
                 result = 0;
